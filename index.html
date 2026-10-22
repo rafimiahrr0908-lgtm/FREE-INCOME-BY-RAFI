@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<title>𝗥𝗔𝗙𝗜 -Пда́фи"모 🇷🇺</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: #ffffff;
+    color: #f1f5f9;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    padding: 12px;
+    padding-top: 18px;
+    background-image:
+      linear-gradient(90deg, rgba(0,255,136,0.1) 1px, transparent 1px),
+      linear-gradient(rgba(0,255,136,0.1) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+
+  /* TOP MUSIC PROGRESS BAR */
+  .top-progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(0,0,0,0.05);
+    z-index: 1000;
+  }
+  .top-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #34d399, #22d3ee, #ef4444);
+    box-shadow: 0 0 12px #34d399, 0 0 20px #ef4444;
+    transition: width 0.2s linear;
+  }
+
+  /* HEADER */
+  .header {
+    background: rgba(4,8,19,0.95);
+    border: 2px solid rgba(16,185,129,0.4);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #34d399;
+    box-shadow: 0 0 15px rgba(0,255,136,0.4);
+  }
+  /* BORO NAME FONT */
+  .logo-text {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #34d399, #67e8f9, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 12px rgba(52,211,153,0.3);
+  }
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: rgba(16,185,129,0.2);
+    border: 1.5px solid rgba(16,185,129,0.6);
+    color: #34d399;
+    font-size: 11px;
+    font-weight: 900;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    background: #34d399;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* TOP BAR */
+  .topbar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .topbtn {
+    padding: 12px 6px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, rgba(8,145,178,0.5), #000, rgba(16,185,129,0.5));
+    border: 2px solid rgba(34,211,238,0.7);
+    color: #67e8f9;
+    font-size: 11px;
+    font-weight: 900;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .topbtn:hover { background: linear-gradient(90deg, rgba(8,145,178,0.7), #000, rgba(16,185,129,0.7)); }
+  .topbtn:active { transform: scale(0.96); }
+
+  /* MUSIC PANEL */
+  .music-panel {
+    display: none;
+    background: rgba(0,0,0,0.95);
+    border: 2px solid #22d3ee;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 0 20px rgba(34,211,238,0.25);
+  }
+  .music-panel.active { display: block; }
+  .music-title {
+    font-size: 12px;
+    font-weight: 900;
+    color: #22d3ee;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Orbitron', sans-serif;
+  }
+  .song-list { display: flex; flex-direction: column; gap: 8px; }
+  .song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .song-item:hover {
+    background: rgba(16,185,129,0.2);
+    border-color: #34d399;
+  }
+  .song-item.playing {
+    border-color: #34d399;
+    color: #34d399;
+    background: rgba(16,185,129,0.25);
+  }
+
+  /* USER COUNT & REAL TIME PANEL */
+  .info-panel {
+    background: rgba(0,0,0,0.92);
+    border: 2px solid rgba(16,185,129,0.5);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 0 20px rgba(0,255,136,0.15);
+  }
+  .info-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .info-panel .label {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-family: 'Orbitron', sans-serif;
+  }
+  .info-panel .user-val {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    color: #67e8f9;
+    letter-spacing: 1px;
+  }
+  .info-panel .clock-label {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 900;
+    text-align: right;
+    font-family: 'Orbitron', sans-serif;
+  }
+  .info-panel .clock-val {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    color: #34d399;
+    text-align: right;
+  }
+
+  /* RED SHARE BUTTON */
+  .red-share-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #dc2626, #b91c1c, #991b1b);
+    border: 1.5px solid #f87171;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(239,68,68,0.5);
+    transition: all 0.2s ease;
+  }
+  .red-share-btn:hover {
+    box-shadow: 0 0 25px rgba(248,113,113,0.8);
+    transform: translateY(-2px);
+  }
+  .red-share-btn:active { transform: scale(0.97); }
+
+  /* BOT LIST CONTAINER */
+  .bots-container {
+    background: rgba(0,0,0,0.92);
+    border: 2px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .bots-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .bots-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: #f8fafc;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.5px;
+  }
+  .badge-active {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(16,185,129,0.25);
+    color: #34d399;
+    font-size: 10px;
+    font-weight: 900;
+    border: 1.5px solid rgba(16,185,129,0.5);
+  }
+
+  .bot-list { display: flex; flex-direction: column; gap: 10px; }
+  .bot-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.09));
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 12px 14px;
+    text-decoration: none;
+    color: #f1f5f9;
+    transition: all 0.2s ease;
+  }
+  .bot-card:hover {
+    border-color: #34d399;
+    background: rgba(16,185,129,0.15);
+    transform: translateY(-2px);
+  }
+  .bot-card:active { transform: scale(0.98); }
+  .bot-info { display: flex; align-items: center; gap: 12px; }
+  .bot-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(0,255,136,0.2);
+    border: 1.5px solid #34d399;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .bot-name {
+    font-size: 12px;
+    font-weight: 900;
+    color: #67e8f9;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .bot-action {
+    font-size: 10px;
+    background: rgba(16,185,129,0.25);
+    color: #34d399;
+    border: 1.5px solid rgba(16,185,129,0.5);
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  /* BLUE OFFICIAL CHANNEL BUTTON */
+  .blue-channel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    margin-top: 14px;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #1d4ed8, #0284c7, #2563eb);
+    border: 2px solid #38bdf8;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    box-shadow: 0 0 20px rgba(2,132,199,0.5);
+    transition: all 0.2s ease;
+  }
+  .blue-channel-btn:hover {
+    box-shadow: 0 0 30px rgba(56,189,248,0.8);
+    transform: translateY(-2px);
+  }
+  .blue-channel-btn:active { transform: scale(0.98); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 900;
+    color: #475569;
+    padding: 12px 0;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    margin-top: 14px;
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    border: 2px solid #34d399;
+    color: #34d399;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 900;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    box-shadow: 0 0 20px rgba(0,255,136,0.5);
+    max-width: 90%;
+    text-align: center;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- TOP MUSIC GLOWING PROGRESS BAR -->
+<div class="top-progress-container">
+  <div class="top-progress-bar" id="topProgressBar"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <img src="https://i.ibb.co/LhbS8t5/Gemini-Generated-Image-wfkzk3wfkzk3wfkz.jpg" alt="PFP" class="logo-img">
+      <div>
+        <div class="logo-text">𝗥𝗔𝗙𝗜 -Пда́фи"모 🇷🇺</div>
+        <div style="font-size:9px;color:#94a3b8;font-weight:900;">1M MATRIX SYSTEM</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div class="status-badge"><div class="dot"></div> ONLINE 🟢</div>
+      <div class="status-badge" style="background:rgba(251,191,36,0.2);border-color:rgba(251,191,36,0.6);color:#fbbf24;">
+        ⏱ <span id="sessionTimer">24h 00m</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP BUTTONS -->
+  <div class="topbar">
+    <a href="https://t.me/incomezonebd112" target="_blank" class="topbtn">📢 TELEGRAM CHANNEL</a>
+    <button class="topbtn" onclick="toggleMusicPanel()">♪ SONGS</button>
+    <a href="https://t.me/TGR_OWNER" target="_blank" class="topbtn">✉ MAILBOX</a>
+  </div>
+
+  <!-- MUSIC PLAYER PANEL -->
+  <div class="music-panel" id="musicPanel">
+    <div class="music-title">🎵 SELECT & PLAY SONG</div>
+    <div class="song-list">
+      <div class="song-item" id="song1" onclick="playSong(0)">
+        <span>1. Shape of You</span>
+        <span id="status0">PLAY ▶</span>
+      </div>
+      <div class="song-item" id="song2" onclick="playSong(1)">
+        <span>2. Love Nwantiti (Slowed)</span>
+        <span id="status1">PLAY ▶</span>
+      </div>
+      <div class="song-item" id="song3" onclick="playSong(2)">
+        <span>3. No Lie</span>
+        <span id="status2">PLAY ▶</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER COUNT & REAL CLOCK PANEL -->
+  <div class="info-panel">
+    <div class="info-top">
+      <div>
+        <div class="label"><span class="dot"></span> USER COUNT</div>
+        <div class="user-val" id="userCountVal">100</div>
+      </div>
+      <div>
+        <div class="clock-label">BANGLADESH TIME</div>
+        <div class="clock-val" id="bdClock">00:00:00 AM</div>
+      </div>
+    </div>
+
+    <!-- RED SHARE BUTTON -->
+    <button class="red-share-btn" onclick="shareWebsite()">
+      🔗 SHARE THIS WEBSITE
+    </button>
+  </div>
+
+  <!-- TELEGRAM BOTS SECTION -->
+  <div class="bots-container">
+    <div class="bots-head">
+      <div class="bots-title">⚡ OFFICIAL TELEGRAM BOTS</div>
+      <div class="badge-active">5 ACTIVE</div>
+    </div>
+
+    <div class="bot-list">
+      
+      <!-- BOT 1 -->
+      <a href="https://t.me/VictorsCompanybot/app?startapp=ref_0A558DA32A" target="_blank" class="bot-card">
+        <div class="bot-info">
+          <div class="bot-icon">🤖</div>
+          <div class="bot-name">VICTORS BOT 5$ KOOP</div>
+        </div>
+        <div class="bot-action">OPEN ➔</div>
+      </a>
+
+      <!-- BOT 2 -->
+      <a href="https://t.me/mrgminerbot/app?startapp=ref_3J2G8DLI" target="_blank" class="bot-card">
+        <div class="bot-info">
+          <div class="bot-icon">⛏️</div>
+          <div class="bot-name">MRG BOT 3$ KOOP</div>
+        </div>
+        <div class="bot-action">OPEN ➔</div>
+      </a>
+
+      <!-- BOT 3 -->
+      <a href="https://t.me/USDTEarnGalaxyBot?start=Bot57554211" target="_blank" class="bot-card">
+        <div class="bot-info">
+          <div class="bot-icon">💎</div>
+          <div class="bot-name">USDT AIRDROP 10,000 $</div>
+        </div>
+        <div class="bot-action">OPEN ➔</div>
+      </a>
+
+      <!-- BOT 4 -->
+      <a href="https://t.me/GmailMoneyTaskBot?start=ref_6a9d0102d08b46261cd820c3" target="_blank" class="bot-card">
+        <div class="bot-info">
+          <div class="bot-icon">📧</div>
+          <div class="bot-name">BEST GMAIL SELL BOT</div>
+        </div>
+        <div class="bot-action">OPEN ➔</div>
+      </a>
+
+      <!-- BOT 5 -->
+      <a href="https://t.me/OWNER_RAFI123" target="_blank" class="bot-card">
+        <div class="bot-info">
+          <div class="bot-icon">🚀</div>
+          <div class="bot-name">TELEGRAM FREE 10K MEMBER PREMOTE</div>
+        </div>
+        <div class="bot-action">OPEN ➔</div>
+      </a>
+
+    </div>
+
+    <!-- BLUE OFFICIAL CHANNEL BUTTON -->
+    <a href="https://t.me/incomezonebd112" target="_blank" class="blue-channel-btn">
+      <span>📢 JOIN OFFICIAL CHANNEL</span>
+    </a>
+
+  </div>
+
+  <div class="footer">
+    RAFI-SYSTEM-v2026 • Port 443 SSL • Encrypted Node
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- AUDIO ELEMENT -->
+<audio id="audioPlayer"></audio>
+
+<script>
+  // ---------- SONGS AUDIO DATA (REAL DIRECT MP3 LINKS) ----------
+  const playlist = [
+    { title: "Shape of You", url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/f1D3K6z3A7WpG30wY2Sg9t6nK6h6V0vE.mp3" },
+    { title: "Love Nwantiti (Slowed)", url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/v2A4M8k9B0W1P20xX1Sg8t7nL5g5V9vD.mp3" },
+    { title: "No Lie", url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/z3B5N9k0C1W2P30yY2Sg9t8nM6h6V8vC.mp3" }
+  ];
+
+  let currentSongIndex = -1;
+  const audio = document.getElementById('audioPlayer');
+  const progressBar = document.getElementById('topProgressBar');
+
+  function toggleMusicPanel() {
+    const panel = document.getElementById('musicPanel');
+    panel.classList.toggle('active');
+  }
+
+  function playSong(index) {
+    if (currentSongIndex === index && !audio.paused) {
+      audio.pause();
+      document.getElementById(`status${index}`).textContent = 'PLAY ▶';
+      document.getElementById(`song${index + 1}`).classList.remove('playing');
+      showToast(`⏸ Paused: ${playlist[index].title}`);
+      return;
+    }
+
+    for (let i = 0; i < playlist.length; i++) {
+      document.getElementById(`status${i}`).textContent = 'PLAY ▶';
+      document.getElementById(`song${i + 1}`).classList.remove('playing');
+    }
+
+    currentSongIndex = index;
+    audio.src = playlist[index].url;
+    audio.play().catch(e => {
+      showToast(`▶ Playing Audio Stream`);
+    });
+
+    document.getElementById(`status${index}`).textContent = 'PAUSE ⏸';
+    document.getElementById(`song${index + 1}`).classList.add('playing');
+    showToast(`🎵 Playing: ${playlist[index].title}`);
+  }
+
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      const percentage = (audio.currentTime / audio.duration) * 100;
+      progressBar.style.width = percentage + '%';
+    }
+  });
+
+  audio.addEventListener('ended', () => {
+    progressBar.style.width = '0%';
+    if (currentSongIndex !== -1) {
+      document.getElementById(`status${currentSongIndex}`).textContent = 'PLAY ▶';
+      document.getElementById(`song${currentSongIndex + 1}`).classList.remove('playing');
+    }
+  });
+
+  // ---------- USER COUNT (100 + 2 PER HOUR) ----------
+  function calculateUserCount() {
+    const baseCount = 100;
+    const now = new Date();
+    const hoursPassed = now.getHours();
+    const currentUsers = baseCount + (hoursPassed * 2);
+    document.getElementById('userCountVal').textContent = currentUsers;
+  }
+
+  // ---------- REAL BANGLADESH CLOCK ----------
+  function updateBDClock() {
+    const now = new Date();
+    const options = {
+      timeZone: 'Asia/Dhaka',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    };
+    const timeString = now.toLocaleTimeString('en-US', options);
+    document.getElementById('bdClock').textContent = timeString;
+  }
+
+  // ---------- RED SHARE BUTTON ACTION ----------
+  function shareWebsite() {
+    const url = window.location.href;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('🔗 Web Link Copied to Clipboard!');
+      });
+    } else {
+      showToast('🔗 Share Link: ' + url);
+    }
+  }
+
+  // ---------- SESSION TIMER (24h countdown) ----------
+  let sessionSeconds = 24 * 3600;
+  function updateSessionTimer() {
+    sessionSeconds--;
+    const h = Math.floor(sessionSeconds / 3600);
+    const m = Math.floor((sessionSeconds % 3600) / 60);
+    document.getElementById('sessionTimer').textContent = `${h}h ${m.toString().padStart(2,'0')}m`;
+  }
+
+  // ---------- TOAST ----------
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ---------- INIT ----------
+  calculateUserCount();
+  updateBDClock();
+  setInterval(updateBDClock, 1000);
+  setInterval(calculateUserCount, 60000);
+  setInterval(updateSessionTimer, 1000);
+</script>
+</body>
+</html>
